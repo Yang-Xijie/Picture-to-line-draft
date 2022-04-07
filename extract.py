@@ -1,33 +1,26 @@
+import argparse
 import numpy as np
 from PIL import Image  # https://pillow.readthedocs.io/en/stable/reference/Image.html
 from pathlib import Path
-import argparse
 
 
-# pic_matrix 0-255的灰度图像
-# new_matrix 
-def convolve(pic_matrix, new_matrix, kernel):
-    print((pic_matrix < 0).sum())
-    print(pic_matrix.dtype)
-    kernel_height, kernel_width = kernel.shape
+# pic_matrix 0-255的灰度图像 numpy数组 类型np.uint8
+# kernel_size int 表示一个运算核的大小
+# new_matrix 0-255的灰度图像 numpy数组 类型np.uint8
+def convolve(pic_matrix, new_matrix, kernel_size=5):
     picture_height, picture_width = pic_matrix.shape
-    r = int((kernel_height - 1) / 2)  # 找到中心位置
-    for j in range(picture_height - kernel_height + 1):
-        if j % 20 == 0:
-            print("正在执行第" + str(j) + "行像素点")
-        for i in range(picture_width - kernel_width + 1):
-            raw_color = pic_matrix[j + r][i + r]  # 这个kernel中心的颜色
-            # 卷积 在当前的这个kernel中寻找最大的灰度值
-            max_color = 0
-            for m in range(kernel_height):
-                for n in range(kernel_width):
-                    if pic_matrix[j + m][i + n] > max_color:
-                        max_color = pic_matrix[j + m][i + n]
+    result_height = picture_height - kernel_size + 1
+    result_width = picture_width - kernel_size + 1
+    mid_offset = int(kernel_size / 2)  # 中心位置的偏差
 
-            # 颜色减淡
-            new_color = 255 * raw_color / max_color # raw_color 与 max_color 越接近 new_color越白
-
-            new_matrix[j][i] = new_color
+    for r in range(result_height):
+        print(r)
+        for c in range(result_width):
+            raw_color = pic_matrix[r + mid_offset][c + mid_offset]  # 这个kernel中心的颜色
+            max_color = np.max(pic_matrix[r:(r+kernel_size),c:(c+kernel_size)])
+            # 颜色减淡: raw_color 与 max_color 越接近 new_color越白
+            new_color = 255 * raw_color / max_color
+            new_matrix[r][c] = new_color
 
 
 if __name__ == "__main__":
@@ -46,9 +39,9 @@ if __name__ == "__main__":
     print(pic.size)
     pic_matrix = np.array(pic).reshape((height, width))
 
-    kernel = np.zeros((5, 5))
+    
     lineart_matrix = np.zeros(shape=(height - 2, width - 2), dtype=np.int8)
-    convolve(pic_matrix, lineart_matrix, kernel)
+    convolve(pic_matrix, lineart_matrix)
     lineart = Image.fromarray(lineart_matrix, "L")
     lineart.save(Path(args.output_folder_path, pic_name))
 
