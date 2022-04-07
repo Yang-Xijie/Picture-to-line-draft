@@ -6,6 +6,7 @@
 
 ```
 $ python extract.py -i "mizore_part.png" -o "result" --kernel_size 3 --contrast_threshold 0.96
+100%|██████████████████████████| 236/236 [00:00<00:00, 505.24it/s]
 [成功]线稿保存于result/mizore_part.png
 ```
 

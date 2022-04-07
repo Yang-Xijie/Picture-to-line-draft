@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 import numpy as np
 from PIL import Image  # https://pillow.readthedocs.io/en/stable/reference/Image.html
+from tqdm import tqdm  # progress bar https://github.com/tqdm/tqdm
 
 # [param]
 # picture_matrix: numpy.ndarray dtype=np.uint8
@@ -37,21 +38,22 @@ def picture2lineart(picture_matrix, kernel_size, contrast_threshold):
     middle_offset = int(kernel_size / 2)  # 中心位置的偏差
 
     lineart_matrix = np.zeros(shape=(lineart_height, lineart_width), dtype=np.int8)
-    for r in range(lineart_height):
-        for c in range(lineart_width):
-            # 当前kernel中心的颜色
-            raw_color = picture_matrix[r + middle_offset][c + middle_offset]
-            max_color = np.max(
-                picture_matrix[r : (r + kernel_size), c : (c + kernel_size)]
-            )
+    with tqdm(range(lineart_height)) as tq:
+        for r in tq:
+            for c in range(lineart_width):
+                # 当前kernel中心的颜色
+                raw_color = picture_matrix[r + middle_offset][c + middle_offset]
+                max_color = np.max(
+                    picture_matrix[r : (r + kernel_size), c : (c + kernel_size)]
+                )
 
-            contrast = raw_color / max_color  # contrast in [0,1]
-            if contrast > contrast_threshold:
-                new_color = 255  # 图片去脏 差异特别小的时候就直接给255
-            else:
-                # 颜色减淡: raw_color 与 max_color 越接近 new_color越白
-                new_color = np.uint8(255 * raw_color / max_color)
-            lineart_matrix[r][c] = new_color
+                contrast = raw_color / max_color  # contrast in [0,1]
+                if contrast > contrast_threshold:
+                    new_color = 255  # 图片去脏 差异特别小的时候就直接给255
+                else:
+                    # 颜色减淡: raw_color 与 max_color 越接近 new_color越白
+                    new_color = np.uint8(255 * raw_color / max_color)
+                lineart_matrix[r][c] = new_color
 
     return lineart_matrix
 
@@ -88,4 +90,3 @@ if __name__ == "__main__":
     print(
         f"[成功]线稿保存于{Path(arguments.output_folder_path, Path(arguments.picture_path).name)}"
     )
-
