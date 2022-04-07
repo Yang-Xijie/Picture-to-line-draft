@@ -1,7 +1,8 @@
 import argparse
+import os
+from pathlib import Path
 import numpy as np
 from PIL import Image  # https://pillow.readthedocs.io/en/stable/reference/Image.html
-from pathlib import Path
 
 # [param]
 # picture_matrix: numpy.ndarray dtype=np.uint8
@@ -81,4 +82,10 @@ if __name__ == "__main__":
         contrast_threshold=arguments.contrast_threshold,
     )
     lineart = Image.fromarray(lineart_matrix, "L")
+    if not os.path.exists(Path(arguments.output_folder_path)):
+        os.mkdir(Path(arguments.output_folder_path))
     lineart.save(Path(arguments.output_folder_path, Path(arguments.picture_path).name))
+    print(
+        f"[成功]线稿保存于{Path(arguments.output_folder_path, Path(arguments.picture_path).name)}"
+    )
+
