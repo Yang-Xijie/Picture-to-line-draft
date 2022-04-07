@@ -4,16 +4,8 @@ from pathlib import Path
 import argparse
 
 
-def ctrl_lim(num):
-    # 控制输入的数范围在0~255
-    if num < 0:
-        return 0
-    if num > 255:
-        return 255
-    return num
-
-
 # pic_matrix 0-255的灰度图像
+# new_matrix 
 def convolve(pic_matrix, new_matrix, kernel):
     print((pic_matrix < 0).sum())
     print(pic_matrix.dtype)
@@ -31,19 +23,11 @@ def convolve(pic_matrix, new_matrix, kernel):
                 for n in range(kernel_width):
                     if pic_matrix[j + m][i + n] > max_color:
                         max_color = pic_matrix[j + m][i + n]
-            # 反色
-            max_color = ctrl_lim(255 - max_color)
-            # 颜色减淡
-            if raw_color == 255:  # 原来是白的现在还是白的
-                new_color = 255
-            elif max_color == 0:  # kernel内部有白色值 则颜色不变
-                new_color = raw_color
-            else:
-                new_color = raw_color / (
-                    1 - max_color / 255
-                )  # 255 * raw_color / max_color
 
-            new_matrix[j][i] = ctrl_lim(new_color)
+            # 颜色减淡
+            new_color = 255 * raw_color / max_color # raw_color 与 max_color 越接近 new_color越白
+
+            new_matrix[j][i] = new_color
 
 
 if __name__ == "__main__":
@@ -67,4 +51,4 @@ if __name__ == "__main__":
     convolve(pic_matrix, lineart_matrix, kernel)
     lineart = Image.fromarray(lineart_matrix, "L")
     lineart.save(Path(args.output_folder_path, pic_name))
-    lineart.show()
+
