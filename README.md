@@ -66,3 +66,5 @@ optional arguments:
 ## References
 
 [GitHub | JingyuNankin/Picture-to-line-draft](https://github.com/JingyuNankin/Picture-to-line-draft) [LICENSE](https://github.com/JingyuNankin/Picture-to-line-draft/issues/1)
+
+示例使用图片 [Pixiv | 夜ノみつき - リズと青い鳥](https://www.pixiv.net/en/artworks/69081691)
