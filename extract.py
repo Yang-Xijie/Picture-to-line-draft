@@ -1,6 +1,6 @@
-import os
 import numpy as np
 from PIL import Image
+from pathlib import Path
 
 def ctrl_lim(num):
     #控制输入的数范围在0~255
@@ -40,7 +40,10 @@ def convolve(raw_matrix, new_matrix, kernel):
             
             new_matrix[j][i] = ctrl_lim(new_color)
 
-raw_pic_path = os.path.abspath('洛天依.bmp')
+pic_name = "mizore.png"
+raw_pic_path = Path("origin", pic_name)
+print(raw_pic_path)
+
 raw_pic = Image.open(raw_pic_path).convert('L')
 
 width, height = raw_pic.size
@@ -56,5 +59,4 @@ print("开始")
 convolve(raw_matrix, new_matrix, kernel)
 print("完毕")
 new_im = Image.fromarray(new_matrix, 'L')
-new_im.show()
-new_im.save(os.path.abspath('result.bmp'))
+new_im.save(Path("result", pic_name))
